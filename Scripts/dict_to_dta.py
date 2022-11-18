@@ -136,28 +136,30 @@ def dict_to_dta(song_dict: dict):
 
     res = []
     for k in song_dict.keys():
-        res.append(k)
+        res.append([k])
 #        print(k)
         if isinstance(song_dict[k], dict):
             for kk in song_dict[k].keys():
-                res.append([kk])
+                res[-1].append([kk])
 #                print(f"\t{kk}")
                 if isinstance(song_dict[k][kk], dict):
                     for kkk in song_dict[k][kk].keys():
-                        res[-1].append([kkk])
+                        res[-1][-1].append([kkk])
 #                        print(f"\t\t{kkk}")
                         if isinstance(song_dict[k][kk][kkk], dict):
                             for kkkk in song_dict[k][kk][kkk].keys():
-                                res[-1][-1].append([kkkk])
+                                res[-1][-1][-1].append([kkkk])
 #                                print(f"\t\t\t{kkkk}")
                                 if isinstance(song_dict[k][kk][kkk][kkkk], dict):
                                     print("yes")
                                 else:
-                                    res[-1][-1][-1].append(song_dict[k][kk][kkk][kkkk])
+                                    res[-1][-1][-1][-1].append(song_dict[k][kk][kkk][kkkk])
                         else:
-                            res[-1][-1].append(song_dict[k][kk][kkk])
+                            res[-1][-1][-1].append(song_dict[k][kk][kkk])
                 else:
-                    res[-1].append(song_dict[k][kk])
+                    res[-1][-1].append(song_dict[k][kk])
+        else:
+            res.append(song_dict[k])
                 
     pprint.pprint(res)
 
