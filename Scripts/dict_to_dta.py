@@ -180,6 +180,7 @@ def dict_to_dta(song_dict: dict):
     for line in spaced_output:
         print(line)
         
+    # FIXME: name, artist, and other attributes that require quotes, NEED QUOTES
     with open("output.dta","w") as f:
         indent = 0
         for x in output:
