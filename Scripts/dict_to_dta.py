@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 import pprint
 import json
+import re
 
 # removes any comments from a RB dta, and then returns a nice, tokenized list to parse
 def clean_dta(dta_path: Path) -> list:
@@ -119,39 +120,22 @@ def parse_dta(dta_path: Path):
     pprint.pprint(parsed_dta_dict, sort_dicts=False)
     return parsed_dta_dict
 
-def myprint(d):
-    for k, v in d.items():
-        if isinstance(v, dict):
-            print(k)
-            myprint(v)
-        else:
-            print("{0} : {1}".format(k, v))
-
 def dict_to_dta(song_dict: dict):
-#    def flatten(d, c = []):
-#       for a, b in d.items():
-#          yield from ([c+[a, b]] if not isinstance(b, dict) else flatten(b, c+[a]))
-#
-#    print(list(flatten(song_dict)))
-
+    # FIXME: shorten this block of code to something like a recursive function
     res = []
     for k in song_dict.keys():
         res.append([k])
-#        print(k)
         if isinstance(song_dict[k], dict):
             for kk in song_dict[k].keys():
                 res[-1].append([kk])
-#                print(f"\t{kk}")
                 if isinstance(song_dict[k][kk], dict):
                     for kkk in song_dict[k][kk].keys():
                         res[-1][-1].append([kkk])
-#                        print(f"\t\t{kkk}")
                         if isinstance(song_dict[k][kk][kkk], dict):
                             for kkkk in song_dict[k][kk][kkk].keys():
                                 res[-1][-1][-1].append([kkkk])
-#                                print(f"\t\t\t{kkkk}")
                                 if isinstance(song_dict[k][kk][kkk][kkkk], dict):
-                                    print("yes")
+                                    pass
                                 else:
                                     res[-1][-1][-1][-1].append(song_dict[k][kk][kkk][kkkk])
                         else:
@@ -161,7 +145,45 @@ def dict_to_dta(song_dict: dict):
         else:
             res.append(song_dict[k])
                 
-    pprint.pprint(res)
+    # FIXME: add proper indenting and spacing to the output dta
+    output = []
+    def removeNestings(l):
+        for i in l:
+            if type(i) == list:
+                i.insert(0, "(")
+                i.append(")")
+                removeNestings(i)
+            else:
+                output.append(i)
+                output.append(" ")
+                
+    removeNestings(res)
+
+    i = 0
+    while i < len(output):
+        if output[i] == "(" and i > 0:
+            output.insert(i, "\n")
+            i += 1
+        i += 1
+        
+    print(output)
+    
+    spaced_output = []
+    phrase = []
+    for z in output:
+        phrase.append(z)
+        if z == "\n":
+            spaced_output.append(phrase.copy())
+            phrase.clear()
+    
+    indent = 0
+    for line in spaced_output:
+        print(line)
+        
+    with open("output.dta","w") as f:
+        indent = 0
+        for x in output:
+            f.write(str(x))
 
 def main():
     if len(sys.argv) != 2:
