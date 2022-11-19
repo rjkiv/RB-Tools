@@ -50,7 +50,7 @@ def dict_from_name(parsed_name) -> str:
     for s in range(len(parsed_name)):
         if s > 0:
             if type(parsed_name[s]) == list:
-                new_song_name_list.append("(" + " ".join(parsed_name[s]) + ")")
+                new_song_name_list.append("(" + " ".join(str(x) for x in parsed_name[s]) + ")")
             elif parsed_name[s] != "":
                 new_song_name_list.append(str(parsed_name[s]))
     return " ".join(new_song_name_list)
