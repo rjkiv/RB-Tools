@@ -121,29 +121,21 @@ def parse_dta(dta_path: Path):
     return parsed_dta_dict
 
 def dict_to_dta(song_dict: dict):
-    # FIXME: shorten this block of code to something like a recursive function
-    res = []
-    for k in song_dict.keys():
-        res.append([k])
-        if isinstance(song_dict[k], dict):
-            for kk in song_dict[k].keys():
-                res[-1].append([kk])
-                if isinstance(song_dict[k][kk], dict):
-                    for kkk in song_dict[k][kk].keys():
-                        res[-1][-1].append([kkk])
-                        if isinstance(song_dict[k][kk][kkk], dict):
-                            for kkkk in song_dict[k][kk][kkk].keys():
-                                res[-1][-1][-1].append([kkkk])
-                                if isinstance(song_dict[k][kk][kkk][kkkk], dict):
-                                    pass
-                                else:
-                                    res[-1][-1][-1][-1].append(song_dict[k][kk][kkk][kkkk])
-                        else:
-                            res[-1][-1][-1].append(song_dict[k][kk][kkk])
-                else:
-                    res[-1][-1].append(song_dict[k][kk])
-        else:
-            res.append(song_dict[k])
+    def dict_to_list_recursive(song_dict: dict, res: list = []):
+        for k in song_dict.keys():
+            res.append([k])
+            if isinstance(song_dict[k], dict):
+                dict_to_list_recursive(song_dict[k], res[-1])
+            else:
+                res[-1].append(song_dict[k])
+        return res
+                
+    recursive_res = dict_to_list_recursive(song_dict)
+    
+    print("\n\nRECURSIVE:\n\n")
+    pprint.pprint(recursive_res)
+    
+    exit()
                 
     # FIXME: add proper indenting and spacing to the output dta
     output = []
@@ -178,7 +170,19 @@ def dict_to_dta(song_dict: dict):
     
     indent = 0
     for line in spaced_output:
-        print(line)
+        if "name" in line:
+            name_ind = line.index("name")
+            line[name_ind+2] = f"\"{line[name_ind+2]}\""
+        if "artist" in line:
+            artist_ind = line.index("artist")
+            line[artist_ind+2] = f"\"{line[artist_ind+2]}\""
+        if "album_name" in line:
+            album_ind = line.index("album_name")
+            line[album_ind+2] = f"\"{line[album_ind+2]}\""
+            
+    print(spaced_output)
+#    for sp in spaced_output:
+#        print(sp)
         
     # FIXME: name, artist, and other attributes that require quotes, NEED QUOTES
     with open("output.dta","w") as f:
