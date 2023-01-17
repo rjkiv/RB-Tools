@@ -7,6 +7,8 @@ import pprint
 # Onyx location on Windows: C:/Program Files/OnyxToolkit/onyx.exe
 # To take file/folder contents and put them into a CON:
 # onyx stfs my_folder --to new_con_name --game (either rb3 or rb2)
+# To take a CON and extract its contents:
+# onyx extract my_con_name
     
 def port_rbn(shortname: str):
     print("hello from port_rbn")
