@@ -2,6 +2,11 @@ from pathlib import Path
 from mido import MidiFile, MidiTrack
 import sys
 import pprint
+
+# NOTES REGARDING ONYX CLI SYNTAX:
+# Onyx location on Windows: C:/Program Files/OnyxToolkit/onyx.exe
+# To take file/folder contents and put them into a CON:
+# onyx stfs my_folder --to new_con_name --game (either rb3 or rb2)
     
 def port_rbn(shortname: str):
     print("hello from port_rbn")
