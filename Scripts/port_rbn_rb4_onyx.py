@@ -40,6 +40,10 @@ def browse_extracted_folders(extracted_folder_name):
         shortname_new = root_file.stem
         break
 
+    if len(shortname_new) > 26:
+        print("WARNING: this shortname is more than 26 characters long. Please shorten this name and try again.")
+        exit()
+
     # if there are harms present in the RB4 file, remove them and place them in an _update mid
     
     root_of_con = cwd.joinpath(f"{extracted_folder_name}/songs")
