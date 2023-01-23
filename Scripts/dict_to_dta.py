@@ -131,6 +131,8 @@ def dict_to_dta(song_dict: dict):
         return res
                 
     recursive_res = dict_to_list_recursive(song_dict)
+
+    exit()
     
     print("\n\nRECURSIVE:\n\n")
     pprint.pprint(recursive_res)
@@ -149,7 +151,7 @@ def dict_to_dta(song_dict: dict):
                 output.append(i)
                 output.append(" ")
                 
-    removeNestings(res)
+    removeNestings(recursive_res)
 
     i = 0
     while i < len(output):
@@ -157,7 +159,8 @@ def dict_to_dta(song_dict: dict):
             output.insert(i, "\n")
             i += 1
         i += 1
-        
+    
+    print("OUTPUT\n\n")
     print(output)
     
     spaced_output = []
@@ -180,9 +183,10 @@ def dict_to_dta(song_dict: dict):
             album_ind = line.index("album_name")
             line[album_ind+2] = f"\"{line[album_ind+2]}\""
             
+    print("SPACED OUTPUT\n\n")
     print(spaced_output)
-#    for sp in spaced_output:
-#        print(sp)
+    for sp in spaced_output:
+       print(sp)
         
     # FIXME: name, artist, and other attributes that require quotes, NEED QUOTES
     with open("output.dta","w") as f:
@@ -190,13 +194,69 @@ def dict_to_dta(song_dict: dict):
         for x in output:
             f.write(str(x))
 
+def print_dict(v, prefix=''):
+    if isinstance(v, dict):
+        for k, v2 in v.items():
+            p2 = "{}['{}']".format(prefix, k)
+            print_dict(v2, p2)
+    else:
+        print('{} = {}'.format(prefix, repr(v)))
+
+# name, artist, album, midi_file
+
+def dict_to_dta2(song_dict: dict):
+    for song_k, song_v in song_dict.items():
+        print(f"{'    '*0}({song_k}")
+        if isinstance(song_v, dict):
+            for attr_k, attr_v in song_v.items():
+                if not isinstance(attr_v, dict):
+                    if isinstance(attr_v, str) and attr_k in ["name", "artist", "album_name", "midi_file"]:
+                        print(f"{'    '*1}({attr_k} \"{attr_v}\")")
+                    elif isinstance(attr_v, list):
+                        if attr_k == "preview":
+                            print(f"{'    '*1}({attr_k} {' '.join(str(a) for a in attr_v)})")
+                        else:
+                            print(f"{'    '*1}({attr_k} ({' '.join(str(a) for a in attr_v)}))")
+                    else:
+                        print(f"{'    '*1}({attr_k} {attr_v})")
+                else:
+                    print(f"{'    '*1}({attr_k}")
+                    for attr2_k, attr2_v in attr_v.items():
+                        if not isinstance(attr2_v, dict):
+                            if isinstance(attr2_v, str) and attr2_k in ["name", "artist", "album_name", "midi_file"]:
+                                print(f"{'    '*2}({attr2_k} \"{attr2_v}\")")
+                            elif isinstance(attr2_v, list) and attr2_k != "preview":
+                                print(f"{'    '*2}({attr2_k} ({' '.join(str(a) for a in attr2_v)}))")
+                            else:
+                                print(f"{'    '*2}({attr2_k} {attr2_v})")
+                        else:
+                            print(f"{'    '*2}({attr2_k}")
+                            for attr3_k, attr3_v in attr2_v.items():
+                                if not isinstance(attr3_v, dict):
+                                    if isinstance(attr3_v, str) and attr3_k in ["name", "artist", "album_name", "midi_file"]:
+                                        print(f"{'    '*3}({attr3_k} \"{attr3_v}\")")
+                                    elif isinstance(attr3_v, list) and attr3_k != "preview":
+                                        print(f"{'    '*3}({attr3_k} ({' '.join(str(a) for a in attr3_v)}))")
+                                    else:
+                                        print(f"{'    '*3}{attr3_k}, {attr3_v}")
+                            print(f"{'    '*2})")
+                    print(f"{'    '*1})")
+        print(f"{'    '*0})")
+
+
 def main():
     if len(sys.argv) != 2:
         print("no dta provided")
         exit()
     big_song_dict = parse_dta(sys.argv[1])
+
+    print("Original dict:")
+    print_dict(big_song_dict)
+
     print("Dict to dta...")
-    dict_to_dta(big_song_dict["songs"])
+    # dict_to_dta(big_song_dict["songs"])
+    dict_to_dta2(big_song_dict["songs"])
+
     
 if __name__ == "__main__":
     main()
