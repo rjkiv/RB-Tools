@@ -225,8 +225,11 @@ def dict_to_dta2(song_dict: dict):
                         if not isinstance(attr2_v, dict):
                             if isinstance(attr2_v, str) and attr2_k in ["name", "artist", "album_name", "midi_file"]:
                                 print(f"{'    '*2}({attr2_k} \"{attr2_v}\")")
-                            elif isinstance(attr2_v, list) and attr2_k != "preview":
-                                print(f"{'    '*2}({attr2_k} ({' '.join(str(a) for a in attr2_v)}))")
+                            elif isinstance(attr2_v, list):
+                                if attr2_k == "preview":
+                                    print(f"{'    '*2}({attr2_k} {' '.join(str(a) for a in attr2_v)})")
+                                else:
+                                    print(f"{'    '*2}({attr2_k} ({' '.join(str(a) for a in attr2_v)}))")
                             else:
                                 print(f"{'    '*2}({attr2_k} {attr2_v})")
                         else:
@@ -235,13 +238,51 @@ def dict_to_dta2(song_dict: dict):
                                 if not isinstance(attr3_v, dict):
                                     if isinstance(attr3_v, str) and attr3_k in ["name", "artist", "album_name", "midi_file"]:
                                         print(f"{'    '*3}({attr3_k} \"{attr3_v}\")")
-                                    elif isinstance(attr3_v, list) and attr3_k != "preview":
-                                        print(f"{'    '*3}({attr3_k} ({' '.join(str(a) for a in attr3_v)}))")
+                                    elif isinstance(attr3_v, list):
+                                        if attr3_k == "preview":
+                                            print(f"{'    '*3}({attr3_k} {' '.join(str(a) for a in attr3_v)})")
+                                        else:
+                                            print(f"{'    '*3}({attr3_k} ({' '.join(str(a) for a in attr3_v)}))")
                                     else:
                                         print(f"{'    '*3}{attr3_k}, {attr3_v}")
                             print(f"{'    '*2})")
                     print(f"{'    '*1})")
-        print(f"{'    '*0})")
+            print(f"{'    '*0})")
+
+def dict_to_dta2_recursive(song_dict: dict, indent=0):
+    for song_k, song_v in song_dict.items():
+        print(f"{'    '*indent}({song_k}")
+        if isinstance(song_v, dict):
+            dict_to_dta2_recursive(song_v, indent+1)
+        else:
+            if isinstance(song_v, str) and song_k in ["name", "artist", "album_name", "midi_file"]:
+                print(f"{'    '*(indent+1)}\"{song_v}\"")
+            elif isinstance(song_v, list):
+                if song_k == "preview":
+                    print(f"{'    '*(indent+1)}{' '.join(str(a) for a in song_v)}")
+                else:
+                    print(f"{'    '*(indent+1)}({' '.join(str(a) for a in song_v)})")
+            else:
+                print(f"{'    '*(indent+1)}{song_v}")
+        print(f"{'    '*indent})")
+
+def dict_to_dta3_recursive(song_dict: dict, indent=0):
+    for song_k, song_v in song_dict.items():
+        if isinstance(song_v, dict):
+            print(f"{'    '*indent}({song_k}")
+            dict_to_dta3_recursive(song_v, indent+1)
+            print(f"{'    '*indent})")
+        else:
+            if isinstance(song_v, str) and song_k in ["name", "artist", "album_name", "midi_file"]:
+                print(f"{'    '*(indent)}({song_k} \"{song_v}\")")
+            elif isinstance(song_v, list):
+                if song_k == "preview":
+                    print(f"{'    '*(indent)}({song_k} {' '.join(str(a) for a in song_v)})")
+                else:
+                    print(f"{'    '*(indent)}({song_k} ({' '.join(str(a) for a in song_v)}))")
+            else:
+                print(f"{'    '*(indent)}({song_k} {song_v})")
+
 
 
 def main():
@@ -254,8 +295,7 @@ def main():
     print_dict(big_song_dict)
 
     print("Dict to dta...")
-    # dict_to_dta(big_song_dict["songs"])
-    dict_to_dta2(big_song_dict["songs"])
+    dict_to_dta3_recursive(big_song_dict["songs"])
 
     
 if __name__ == "__main__":
